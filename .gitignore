@@ -9,6 +9,9 @@ ffmpeg/
 node/
 bin/
 
+# Icon
+icon.psd
+
 # Electron builder cache
 .cache/
 
