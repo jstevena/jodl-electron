@@ -1,0 +1,30 @@
+{
+  "appId": "com.johanes.ytdl.lite",
+  "productName": "JoDL-Lite",
+  "directories": {
+    "output": "dist/lite"
+  },
+  "artifactName": "${productName}-Setup-${version}.${ext}",
+  "files": [
+    "src/**/*"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "src/assets/icon.png",
+    "extraFiles": [
+      { "from": "bin", "to": "bin" }
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "shortcutName": "JoDL Lite",
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  }
+}

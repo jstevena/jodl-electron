@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Youtube Downloader - by Johanes Steven</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="app">
+  <div id="sidebar">
+    <div class="nav-item active" data-page="download">
+      <span class="icon">⬇</span> <span data-i18n="nav_download">Download</span>
+    </div>
+    <div class="nav-item" data-page="settings">
+      <span class="icon">⚙</span> <span data-i18n="nav_settings">Settings</span>
+    </div>
+    <hr class="nav-sep" />
+    <div class="nav-item" id="nav-update">
+      <span class="icon">↑</span> <span data-i18n="nav_update">Update yt-dlp</span>
+    </div>
+    <div class="nav-item" id="nav-open-folder">
+      <span class="icon">📂</span> <span data-i18n="nav_open_folder">Open Folder</span>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="cookie-badge" id="sidebar-cookie-badge" style="display:none;">
+        <span>🍪</span>
+        <span data-i18n="cookie_label">Cookie</span>
+      </div>
+      <div class="encoder-badge">
+        <div class="dot"></div>
+        <span id="sidebar-encoder">NVIDIA</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-content">
+
+    <div class="page active" id="page-download">
+      <div class="page-header">
+        <h1 data-i18n="dl_title">Download Video</h1>
+        <p data-i18n="dl_subtitle">Select quality, enter URL, then download.</p>
+      </div>
+      <div class="body">
+
+        <div>
+          <div class="section-label" data-i18n="dl_quality_label">Video Quality</div>
+          <div class="quality-grid">
+            <button class="q-btn" data-q="360p">360p</button>
+            <button class="q-btn" data-q="480p">480p</button>
+            <button class="q-btn" data-q="720p">720p</button>
+            <button class="q-btn" data-q="1080p">1080p</button>
+            <button class="q-btn" data-q="2k">2K</button>
+            <button class="q-btn" data-q="4k">4K</button>
+            <button class="q-btn audio" data-q="mp3">MP3</button>
+            <button class="q-btn audio" data-q="wav">WAV</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label" data-i18n="dl_original_label">Original (No Re-encode)</div>
+          <div class="quality-grid">
+            <button class="q-btn original" data-q="720p-o">720p</button>
+            <button class="q-btn original" data-q="1080p-o">1080p</button>
+            <button class="q-btn original" data-q="2k-o">2K</button>
+            <button class="q-btn original" data-q="4k-o">4K</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+          <div class="section-label" data-i18n="dl_url_label">URL (one per line)</div>
+          <textarea id="url-list" data-i18n-placeholder="dl_url_placeholder" placeholder="https://youtube.com/watch?v=...&#10;https://youtube.com/watch?v=..."></textarea>
+        </div>
+
+        <div id="progress-bar-wrap">
+          <div id="progress-bar"></div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-primary" id="btn-download">
+            <span>▶</span> <span data-i18n="btn_download">Download</span>
+          </button>
+          <button class="btn btn-ghost" id="btn-clear-log" data-i18n="btn_clear_log">Clear Log</button>
+        </div>
+
+        <div id="log-terminal">
+          <span class="log-line dim" data-i18n="log_placeholder">// Terminal output will appear here...</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1 data-i18n="set_title">Settings</h1>
+        <p data-i18n="set_subtitle">Configure encoder, output directory, and cookies.</p>
+      </div>
+      <div class="body">
+
+        <div class="setting-group">
+          <div class="label" data-i18n="set_encoder_label">Encoder</div>
+          <div class="encoder-options">
+            <button class="enc-btn" data-enc="nvidia">
+              <span class="enc-icon">🟢</span>NVIDIA
+            </button>
+            <button class="enc-btn" data-enc="cpu">
+              <span class="enc-icon">🔵</span>CPU
+            </button>
+            <button class="enc-btn" data-enc="remux">
+              <span class="enc-icon">⚡</span>REMUX
+            </button>
+          </div>
+          <div id="enc-save-feedback" class="save-feedback" data-i18n="feedback_encoder">✓ Encoder saved</div>
+        </div>
+
+        <div class="setting-group">
+          <div class="label" data-i18n="set_output_label">Output Directory</div>
+          <div class="path-row">
+            <input type="text" class="path-input" id="output-dir-input" data-i18n-placeholder="set_output_placeholder" placeholder="D:\Downloads\YTDL" />
+            <button class="btn btn-ghost" id="btn-browse" data-i18n="btn_browse">Browse</button>
+            <button class="btn btn-ghost" id="btn-save-dir" data-i18n="btn_save">Save</button>
+          </div>
+          <div id="dir-save-feedback" class="save-feedback" data-i18n="feedback_dir">✓ Directory saved</div>
+        </div>
+
+        <div class="setting-group">
+          <div class="label" data-i18n="set_cookies_label">Cookies</div>
+          <textarea class="cookie-area" id="cookies-input" data-i18n-placeholder="set_cookies_placeholder" placeholder="Paste cookies.txt content here...&#10;&#10;Leave empty if not needed."></textarea>
+          <div class="action-row" style="margin-top:4px;">
+            <button class="btn btn-ghost" id="btn-save-cookies" data-i18n="btn_save_cookies">Save Cookies</button>
+            <button class="btn btn-ghost" id="btn-clear-cookies" data-i18n="btn_clear">Clear</button>
+          </div>
+          <div id="cookie-save-feedback" class="save-feedback" data-i18n="feedback_cookies">✓ Cookies saved</div>
+        </div>
+
+        <div class="setting-group">
+          <div class="label" data-i18n="set_lang_label">Language / Bahasa</div>
+          <div class="lang-options">
+            <button class="lang-btn" data-lang="en">
+            English
+            </button>
+            <button class="lang-btn" data-lang="id">
+            Indonesia
+            </button>
+          </div>
+          <div id="lang-save-feedback" class="save-feedback" data-i18n="feedback_lang">✓ Language changed</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
