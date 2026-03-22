@@ -8,20 +8,19 @@
 </head>
 <body>
 
-<div id="app">
-  <div id="sidebar">
+    <div id="app">
+      <div id="sidebar">
     <div class="nav-item active" data-page="download">
-      <span class="icon">⬇</span> <span data-i18n="nav_download">Download</span>
+      <span class="icon">&#xE896;</span> <span data-i18n="nav_download">Download</span>
     </div>
     <div class="nav-item" data-page="settings">
-      <span class="icon">⚙</span> <span data-i18n="nav_settings">Settings</span>
+      <span class="icon">&#xE713;</span> <span data-i18n="nav_settings">Settings</span>
     </div>
-    <hr class="nav-sep" />
     <div class="nav-item" id="nav-update">
-      <span class="icon">↑</span> <span data-i18n="nav_update">Update yt-dlp</span>
+      <span class="icon">&#xE777;</span> <span data-i18n="nav_update">Update yt-dlp</span>
     </div>
     <div class="nav-item" id="nav-open-folder">
-      <span class="icon">📂</span> <span data-i18n="nav_open_folder">Open Folder</span>
+      <span class="icon">&#xE838;</span> <span data-i18n="nav_open_folder">Open Folder</span>
     </div>
 
     <div class="sidebar-bottom">
@@ -46,26 +45,30 @@
       <div class="body">
 
         <div>
-          <div class="section-label" data-i18n="dl_quality_label">Video Quality</div>
+          <div class="section-label" data-i18n="dl_original_label">Original (No Re-encode)</div>
           <div class="quality-grid">
-            <button class="q-btn" data-q="360p">360p</button>
-            <button class="q-btn" data-q="480p">480p</button>
-            <button class="q-btn" data-q="720p">720p</button>
-            <button class="q-btn" data-q="1080p">1080p</button>
-            <button class="q-btn" data-q="2k">2K</button>
-            <button class="q-btn" data-q="4k">4K</button>
+            <button class="q-btn original" data-q="360p-o">360p</button>
+            <button class="q-btn original" data-q="480p-o">480p</button>
+            <button class="q-btn original" data-q="720p-o">720p</button>
+            <button class="q-btn original" data-q="1080p-o">1080p</button>
+            <button class="q-btn original" data-q="1440p-o">1440p</button>
+            <button class="q-btn original" data-q="2160p-o">2160p</button>
             <button class="q-btn audio" data-q="mp3">MP3</button>
             <button class="q-btn audio" data-q="wav">WAV</button>
           </div>
         </div>
 
         <div>
-          <div class="section-label" data-i18n="dl_original_label">Original (No Re-encode)</div>
+          <div class="section-label" data-i18n="dl_quality_label">Re-encode (For Editing Software Compatibility)</div>
           <div class="quality-grid">
-            <button class="q-btn original" data-q="720p-o">720p</button>
-            <button class="q-btn original" data-q="1080p-o">1080p</button>
-            <button class="q-btn original" data-q="2k-o">2K</button>
-            <button class="q-btn original" data-q="4k-o">4K</button>
+              <button class="q-btn re-encode" data-q="360p">360p</button>
+              <button class="q-btn re-encode" data-q="480p">480p</button>
+              <button class="q-btn re-encode" data-q="720p">720p</button>
+              <button class="q-btn re-encode" data-q="1080p">1080p</button>
+              <button class="q-btn re-encode" data-q="1440p">1440p</button>
+              <button class="q-btn re-encode" data-q="2160p">2160p</button>
+              <button class="q-btn codec-btn selected" data-codec="h265">H.265</button>
+              <button class="q-btn codec-btn" data-codec="h264">H.264</button>
           </div>
         </div>
 

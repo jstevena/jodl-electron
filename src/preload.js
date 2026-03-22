@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('ytdl', {
   // Config
   getConfig:      () => ipcRenderer.invoke('get-config'),
   saveEncoder:    (e) => ipcRenderer.invoke('save-encoder', e),
+  saveCodec: (c) => ipcRenderer.invoke('save-codec', c),
   saveOutputDir:  (d) => ipcRenderer.invoke('save-output-dir', d),
   saveCookies:    (c) => ipcRenderer.invoke('save-cookies', c),
   saveLang:       (l) => ipcRenderer.invoke('save-lang', l),

@@ -18,6 +18,7 @@ const encoderFile = path.join(configDir, 'encoder.txt');
 const lokasiFile  = path.join(configDir, 'lokasi.txt');
 const cookiesFile = path.join(configDir, 'cookies.txt');
 const langFile    = path.join(configDir, 'lang.txt');
+const codecFile   = path.join(configDir, 'codec.txt');
 
 // Cache for resolved binary paths (populated by checkDependencies)
 let resolvedBins = { ytdlp: null, ffmpeg: null, node: null };
@@ -153,6 +154,7 @@ ipcMain.on('window-close',    () => mainWindow.close());
 ipcMain.handle('get-config', () => {
   return {
     encoder:        readFile(encoderFile, 'nvidia'),
+    codec: readFile(codecFile, 'h265'),
     outputDir:      readFile(lokasiFile,  path.join(os.homedir(), 'Downloads', 'YTDL')),
     hasCookies:     fs.existsSync(cookiesFile) && readFile(cookiesFile) !== 'paste cookie here' && readFile(cookiesFile) !== '',
     cookiesContent: readFile(cookiesFile, ''),
@@ -161,6 +163,7 @@ ipcMain.handle('get-config', () => {
 });
 
 ipcMain.handle('save-encoder',    (_, encoder)  => { writeFile(encoderFile, encoder); return true; });
+ipcMain.handle('save-codec', (_, codec) => { writeFile(codecFile, codec); return true; });
 ipcMain.handle('save-output-dir', (_, dir)      => { writeFile(lokasiFile, dir);      return true; });
 ipcMain.handle('save-cookies',    (_, content)  => { writeFile(cookiesFile, content); return true; });
 ipcMain.handle('save-lang',       (_, lang)     => { writeFile(langFile, lang);       return true; });
@@ -214,7 +217,7 @@ function getNodePath() {
   return null; // let yt-dlp find node itself if not resolved
 }
 
-function buildArgs({ type, encoder, outputDir, hasCookies }) {
+function buildArgs({ type, encoder, codec, outputDir, hasCookies }) {
   const t = type.toLowerCase();
   const output   = path.join(outputDir, '%(title)s.%(ext)s');
   const cacheDir = path.join(outputDir, 'cache');
@@ -229,8 +232,8 @@ function buildArgs({ type, encoder, outputDir, hasCookies }) {
   ];
 
   const audioFormats = { mp3: 'mp3', wav: 'wav' };
-  const heights      = { '360p': 360, '480p': 480, '720p': 720, '1080p': 1080, '2k': 1440, '4k': 2160 };
-  const origResMap   = { '720p-o': 720, '1080p-o': 1080, '2k-o': 1440, '4k-o': 2160 };
+  const heights      = { '360p': 360, '480p': 480, '720p': 720, '1080p': 1080, '1440p': 1440, '2160p': 2160 };
+  const origResMap   = { '360p-o': 360, '480p-o': 480, '720p-o': 720, '1080p-o': 1080, '1440p-o': 1440, '2160p-o': 2160 };
 
   let modeArgs = [];
 
@@ -245,12 +248,14 @@ function buildArgs({ type, encoder, outputDir, hasCookies }) {
         '--remux-video', 'mp4',
       ];
     } else {
-      const codec = encoder === 'nvidia' ? 'hevc_nvenc' : 'libx265';
-      const qp    = h >= 1080 ? 18 : 20;
+    const videoCodec = codec === 'h264'
+      ? (encoder === 'nvidia' ? 'h264_nvenc' : 'libx264')
+      : (encoder === 'nvidia' ? 'hevc_nvenc' : 'libx265');
+      const qp = h >= 2160 ? 18 : h >= 1080 ? 20 : 22;
       modeArgs = [
         '-f', `bestvideo[height<=${h}]+bestaudio/best[height<=${h}]/best`,
         '--merge-output-format', 'mp4',
-        '--postprocessor-args', `ffmpeg:-c:v ${codec} -qp ${qp} -c:a aac -b:a 320k`,
+        '--postprocessor-args', `ffmpeg:-c:v ${videoCodec} -qp ${qp} -c:a aac -b:a 320k`,
       ];
     }
 
@@ -267,9 +272,9 @@ function buildArgs({ type, encoder, outputDir, hasCookies }) {
 }
 
 // ── IPC: Download ──────────────────────────────────────────────────────────
-ipcMain.handle('start-download', (event, { urls, type, encoder, outputDir, hasCookies }) => {
+ipcMain.handle('start-download', (event, { urls, type, encoder, codec, outputDir, hasCookies }) => {
   return new Promise((resolve) => {
-    const args = buildArgs({ type, encoder, outputDir, hasCookies });
+    const args = buildArgs({ type, encoder, codec, outputDir, hasCookies });
     if (!args) { resolve({ success: false, message: 'Invalid download type.' }); return; }
 
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });

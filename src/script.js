@@ -9,7 +9,7 @@ const translations = {
 
     dl_title:           'Download Video',
     dl_subtitle:        'Select quality, enter URL, then download.',
-    dl_quality_label:   'Video Quality',
+    dl_quality_label:   'Re-encode (For Editing Software Compatibility)',
     dl_original_label:  'Original (No Re-encode)',
     dl_url_label:       'URL (one per line)',
     dl_url_placeholder: 'https://youtube.com/watch?v=...\nhttps://youtube.com/watch?v=...',
@@ -65,7 +65,7 @@ const translations = {
 
     dl_title:           'Download Video',
     dl_subtitle:        'Pilih kualitas, masukkan URL, lalu unduh.',
-    dl_quality_label:   'Kualitas Video',
+    dl_quality_label:   'Re-encode (Untuk Kompatibilitas Software Editing)',
     dl_original_label:  'Original (Tanpa Re-encode)',
     dl_url_label:       'URL (satu per baris)',
     dl_url_placeholder: 'https://youtube.com/watch?v=...\nhttps://youtube.com/watch?v=...',
@@ -141,8 +141,9 @@ function applyLanguage(lang) {
 }
 
 // ── State ──────────────────────────────────────────────────────────────────
-let config = { encoder: 'nvidia', outputDir: '', hasCookies: false, lang: 'en' };
+let config = { encoder: 'nvidia', outputDir: '', hasCookies: false, lang: 'en', codec: 'h265' };
 let selectedQuality = '';
+let selectedCodec = 'h265';
 let downloading = false;
 
 // ── Init ───────────────────────────────────────────────────────────────────
@@ -159,6 +160,11 @@ function applyConfig() {
   document.getElementById('sidebar-encoder').textContent = encoderLabels[config.encoder] || config.encoder;
   const badge = document.querySelector('.encoder-badge');
   badge.className = 'encoder-badge enc-' + config.encoder;
+
+  selectedCodec = config.codec || 'h265';
+  document.querySelectorAll('.codec-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.codec === selectedCodec);
+  });
 
   document.querySelectorAll('.enc-btn').forEach(b => {
     b.classList.toggle('selected', b.dataset.enc === config.encoder);
@@ -203,7 +209,7 @@ async function runDepCheck() {
   }
   if (!deps.hasFfmpeg) {
     addLog('  • ' + t('dep_ffmpeg'), 'err');
-    addLogLink(t('dep_dl_ffmpeg'), 'https://github.com/BtbN/FFmpeg-Builds/releasesl');
+    addLogLink(t('dep_dl_ffmpeg'), 'https://github.com/BtbN/FFmpeg-Builds/releases');
   }
   if (!deps.hasNode) {
     addLog('  • ' + t('dep_node'), 'err');
@@ -251,9 +257,19 @@ document.querySelectorAll('.nav-item[data-page]').forEach(item => {
 // ── Quality selection ──────────────────────────────────────────────────────
 document.querySelectorAll('.q-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('selected'));
+    if (btn.classList.contains('codec-btn')) return;
+    document.querySelectorAll('.q-btn:not(.codec-btn)').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedQuality = btn.dataset.q;
+  });
+});
+
+document.querySelectorAll('.codec-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    document.querySelectorAll('.codec-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedCodec = btn.dataset.codec;
+    await window.ytdl.saveCodec(selectedCodec); // add this line
   });
 });
 
@@ -303,10 +319,11 @@ document.getElementById('btn-download').addEventListener('click', async () => {
 
   const result = await window.ytdl.startDownload({
     urls,
-    type:      selectedQuality,
-    encoder:   config.encoder,
-    outputDir: config.outputDir,
-    hasCookies:config.hasCookies,
+    type:       selectedQuality,
+    encoder:    config.encoder,
+    codec:      selectedCodec,
+    outputDir:  config.outputDir,
+    hasCookies: config.hasCookies,
   });
 
   addLog('─'.repeat(60), 'dim');
@@ -395,6 +412,7 @@ function showFeedback(id) {
 
 function displayQuality(q) {
   const map = {
+    '360p-o': '360p Original', '480p-o': '480p Original',
     '720p-o': '720p Original', '1080p-o': '1080p Original',
     '2k-o':   '2K Original',   '4k-o':    '4K Original',
   };
