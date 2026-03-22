@@ -153,7 +153,7 @@ ipcMain.on('window-close',    () => mainWindow.close());
 // ── IPC: Config read/write ─────────────────────────────────────────────────
 ipcMain.handle('get-config', () => {
   return {
-    encoder:        readFile(encoderFile, 'nvidia'),
+    encoder:        readFile(encoderFile, 'cpu'),
     codec: readFile(codecFile, 'h265'),
     outputDir:      readFile(lokasiFile,  path.join(os.homedir(), 'Downloads', 'YTDL')),
     hasCookies:     fs.existsSync(cookiesFile) && readFile(cookiesFile) !== 'paste cookie here' && readFile(cookiesFile) !== '',
