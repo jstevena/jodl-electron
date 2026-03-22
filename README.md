@@ -108,8 +108,8 @@ Located in the **sidebar**. yt-dlp is the backend engine that handles all downlo
 
 ## Quality Options
 
-### Video Quality (with re-encode)
-Downloads the best available stream up to the selected resolution and re-encodes it using the selected encoder.
+### Original
+Downloads the best available stream up to the selected resolution without any re-encoding. The video and audio streams are merged directly. Faster than re-encode and preserves original quality, but the output codec depends on what YouTube provides.
 
 `360p` `480p` `720p` `1080p` `2K` `4K`
 
@@ -118,10 +118,11 @@ Extracts audio from the video and saves it as an audio file.
 
 `MP3` `WAV`
 
-### Original (No Re-encode)
-Downloads the best available stream up to the selected resolution without any re-encoding. The video and audio streams are merged directly. Faster than re-encode and preserves original quality, but the output codec depends on what YouTube provides.
+### Re-encode
+Downloads the best available stream up to the selected resolution and re-encodes it using the selected encoder.
 
-`720p` `1080p` `2K` `4K`
+
+`360p` `480p` `720p` `1080p` `2K` `4K`
 
 ---
 
